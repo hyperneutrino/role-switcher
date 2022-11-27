@@ -1,0 +1,17 @@
+{
+  "name": "role-switcher",
+  "version": "1.0.0",
+  "description": "A bot to handle on leave role switching in TransPlace",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Cleo, Cleo#1003, Cleover",
+  "license": "LGPL-3.0+",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "discord.js": "^14.5.0",
+    "dotenv": "^16.0.3"
+  }
+}
