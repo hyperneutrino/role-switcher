@@ -58,23 +58,26 @@ exports.modal = async (client, interaction) => {
         let guild = await client.guilds.cache.get(key.split("|")[0])
         let guildMember = await guild.members.fetch(interaction.user.id)
 
-        value.forEach(async (value, index, array) => {
 
-            let role1 = await guild.roles.cache.get(value[0])
-            let role2 = await guild.roles.cache.get(value[1])
+        let newRoles = value.reduce((cache, [role1ID, role2ID]) => {
+            let role1 = guild.roles.cache.get(role1ID)
+            let role2 = guild.roles.cache.get(role2ID)
 
-            if (guildMember.roles.cache.has(value[0])) {
-                if (guild.id == interaction.guild.id) switched[winDex].value.push(`Switched <@&${value[0]}> -> <@&${value[1]}>`)
+            if (guildMember.roles.cache.has(role1ID)) {
+                if (guild.id == interaction.guild.id) switched[winDex].value.push(`Switched <@&${role1ID}> -> <@&${role2ID}>`)
                 else switched[winDex].value.push(`Switched ${role1.name} -> ${role2.name}`)
-                await guildMember.roles.remove(value[0])
-                await guildMember.roles.add(value[1])
-            } else if (guildMember.roles.cache.has(value[1])) {
-                if (guild.id == interaction.guild.id) switched[winDex].value.push(`Switched <@&${value[1]}> -> <@&${value[0]}>`)
+                cache.delete(role1ID)
+                cache.add(role2ID)
+            } else if (guildMember.roles.cache.has(role2ID)) {
+                if (guild.id == interaction.guild.id) switched[winDex].value.push(`Switched <@&${role2ID}> -> <@&${role1ID}>`)
                 else switched[winDex].value.push(`Switched ${role2.name} -> ${role1.name}`)
-                await guildMember.roles.remove(value[1])
-                await guildMember.roles.add(value[0])
+                cache.delete(role2ID)
+                cache.add(role1ID)
             }
-        })
+            return cache
+        }, new Set(guildMember.roles.cache.keys()));
+
+        await guildMember.roles.set(Array.from(newRoles));
 
     }
 
