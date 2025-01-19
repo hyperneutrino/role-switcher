@@ -30,8 +30,12 @@ exports.slash = async (client, interaction) => {
         ],
         components: [
             new ActionRowBuilder().addComponents(new ButtonBuilder()
-                .setLabel("Switch On Leave Status")
-                .setCustomId("onleave")
+                .setLabel("Go On Leave")
+                .setCustomId("onleave/onleave")
+                .setStyle(2)),
+            new ActionRowBuilder().addComponents(new ButtonBuilder()
+                .setLabel("Return From Leave")
+                .setCustomId("onleave/back")
                 .setStyle(2))
         ]
 
@@ -58,17 +62,18 @@ exports.modal = async (client, interaction) => {
         let guild = await client.guilds.cache.get(key.split("|")[0])
         let guildMember = await guild.members.fetch(interaction.user.id)
 
+        let goingOnLeave = interaction.customId === "onleave/onleave";
 
         let newRoles = value.reduce((cache, [role1ID, role2ID]) => {
             let role1 = guild.roles.cache.get(role1ID)
             let role2 = guild.roles.cache.get(role2ID)
 
-            if (guildMember.roles.cache.has(role1ID)) {
+            if (guildMember.roles.cache.has(role1ID) && goingOnLeave) {
                 if (guild.id == interaction.guild.id) switched[winDex].value.push(`Switched <@&${role1ID}> -> <@&${role2ID}>`)
                 else switched[winDex].value.push(`Switched ${role1.name} -> ${role2.name}`)
                 cache.delete(role1ID)
                 cache.add(role2ID)
-            } else if (guildMember.roles.cache.has(role2ID)) {
+            } else if (guildMember.roles.cache.has(role2ID) && !goingOnLeave) {
                 if (guild.id == interaction.guild.id) switched[winDex].value.push(`Switched <@&${role2ID}> -> <@&${role1ID}>`)
                 else switched[winDex].value.push(`Switched ${role2.name} -> ${role1.name}`)
                 cache.delete(role2ID)
@@ -112,7 +117,7 @@ exports.modal = async (client, interaction) => {
 }
 exports.button = async (client, interaction) => {
     await interaction.showModal(new ModalBuilder()
-        .setCustomId(`onleave`)
+        .setCustomId(interaction.customId)
         .setTitle(`The following information is optional.`)
         .addComponents([
             new ActionRowBuilder().addComponents([
