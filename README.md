@@ -1,0 +1,3 @@
+# ⚠️ This repository is no longer maintained ⚠️
+
+We suggest looking at [TransGG/leave-switcher](https://github.com/TransGG/leave-switcher) instead...
