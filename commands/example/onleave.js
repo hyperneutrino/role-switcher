@@ -42,6 +42,7 @@ exports.slash = async (client, interaction) => {
     })
 }
 exports.modal = async (client, interaction) => {
+    await interaction.deferReply({ ephemeral: true });
 
     // get their reason and duration
 
@@ -93,15 +94,14 @@ exports.modal = async (client, interaction) => {
         }
     )
 
-    interaction.reply({
+    interaction.editReply({
         embeds: [
             new EmbedBuilder()
             .setTitle('Successfully switched on-leave status.')
             .setDescription(`Provided Reason: ${reason}\nProvided Duration: ${duration}`)
             .addFields(switched)
             .setTimestamp()
-        ],
-        ephemeral: true
+        ]
     })
 
     let logChannel = await client.channels.cache.get(client.config.logChannel)
